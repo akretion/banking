@@ -91,3 +91,22 @@ class payment_order(orm.Model):
                     uid, 'payment.order', order_id, 'done', cr
                 )
         return result
+
+    def action_open(self, cr, uid, ids, context=None):
+        res = super(payment_order, self).action_open(cr, uid, ids, context)
+        plo = self.pool['payment.line']
+        today = fields.date.context_today(self, cr, uid, context=context)
+        for order in self.browse(cr, uid, ids, context=context):
+            for payline in order.line_ids:
+                if order.date_prefered == 'due':
+                    requested_date = payline.ml_maturity_date or today
+                elif order.date_prefered == 'fixed':
+                    requested_date = order.date_scheduled or today
+                else:
+                    requested_date = today
+                # No payment date in the past
+                if requested_date < today:
+                    requested_date = today
+                # Write requested_date on 'date' field of payment line
+                plo.write(cr, uid, payline.id, {'date': requested_date})
+        return res

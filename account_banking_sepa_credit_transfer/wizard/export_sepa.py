@@ -185,22 +185,12 @@ class banking_export_sepa_wizard(orm.TransientModel):
             total_amount = total_amount + payment_order.total
             for line in payment_order.line_ids:
                 priority = line.priority
-                if payment_order.date_prefered == 'due':
-                    requested_date = line.ml_maturity_date or today
-                elif payment_order.date_prefered == 'fixed':
-                    requested_date = payment_order.date_scheduled or today
-                else:
-                    requested_date = today
+                requested_date = line.date
                 key = (requested_date, priority)
                 if key in lines_per_group:
                     lines_per_group[key].append(line)
                 else:
                     lines_per_group[key] = [line]
-                # Write requested_date on 'Payment date' of the pay line
-                if requested_date != line.date:
-                    self.pool['payment.line'].write(
-                        cr, uid, line.id,
-                        {'date': requested_date}, context=context)
 
         for (requested_date, priority), lines in lines_per_group.items():
             # B. Payment info

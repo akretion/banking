@@ -301,14 +301,6 @@ class banking_export_pain(orm.AbstractModel):
                 party_agent_institution, gen_args.get('bic_xml_tag'))
             party_agent_bic.text = bic
         except orm.except_orm:
-            if order == 'C':
-                if iban[0:2] != gen_args['initiating_party_country_code']:
-                    raise orm.except_orm(
-                        _('Error:'),
-                        _("The bank account with IBAN '%s' of partner '%s' "
-                            "must have an associated BIC because it is a "
-                            "cross-border SEPA operation.")
-                        % (iban, party_name))
             if order == 'B' or (
                     order == 'C' and gen_args['payment_method'] == 'DD'):
                 party_agent = etree.SubElement(

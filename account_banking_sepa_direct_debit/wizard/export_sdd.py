@@ -182,12 +182,7 @@ class banking_export_sdd_wizard(orm.TransientModel):
             for line in payment_order.line_ids:
                 transactions_count_1_6 += 1
                 priority = line.priority
-                if payment_order.date_prefered == 'due':
-                    requested_date = line.ml_maturity_date or today
-                elif payment_order.date_prefered == 'fixed':
-                    requested_date = payment_order.date_scheduled or today
-                else:
-                    requested_date = today
+                requested_date = line.date
                 if not line.mandate_id:
                     raise orm.except_orm(
                         _('Error:'),
@@ -232,11 +227,6 @@ class banking_export_sdd_wizard(orm.TransientModel):
                     lines_per_group[key].append(line)
                 else:
                     lines_per_group[key] = [line]
-                # Write requested_exec_date on 'Payment date' of the pay line
-                if requested_date != line.date:
-                    self.pool['payment.line'].write(
-                        cr, uid, line.id,
-                        {'date': requested_date}, context=context)
 
         for (requested_date, priority, sequence_type, scheme), lines in \
                 lines_per_group.items():
