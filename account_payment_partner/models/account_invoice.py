@@ -22,7 +22,7 @@ class AccountInvoice(models.Model):
     def _onchange_partner_id(self):
         res = super(AccountInvoice, self)._onchange_partner_id()
         if self.partner_id:
-            if self.type == 'in_invoice':
+            if self.type in ('in_invoice', 'out_refund'):
                 pay_mode = self.partner_id.supplier_payment_mode_id
                 self.payment_mode_id = pay_mode
                 if (
@@ -32,7 +32,7 @@ class AccountInvoice(models.Model):
                         self.commercial_partner_id.bank_ids):
                     self.partner_bank_id =\
                         self.commercial_partner_id.bank_ids[0]
-            elif self.type == 'out_invoice':
+            elif self.type in ('out_invoice', 'in_refund'):
                 # No bank account assignation is done here as this is only
                 # needed for printing purposes and it can conflict with
                 # SEPA direct debit payments. Current report prints it.
