@@ -1,7 +1,7 @@
 # Copyright 2016-2020 ForgeFlow S.L.
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
 
@@ -48,9 +48,9 @@ class TestAccountPaymentMode(TransactionCase):
     def test_payment_mode_company_consistency_change(self):
         # Assertion on the constraints to ensure the consistency
         # for company dependent fields
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(UserError):
             self.payment_mode_c1.write({"fixed_journal_id": self.journal_c2.id})
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(UserError):
             self.payment_mode_c1.write(
                 {
                     "variable_journal_ids": [
