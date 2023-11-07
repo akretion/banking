@@ -3,6 +3,7 @@
 
 from unittest.mock import patch
 
+from odoo import Command
 from odoo.tests.common import TransactionCase
 
 from odoo.addons.account.models.account_payment_method import AccountPaymentMethod
@@ -63,30 +64,28 @@ class TestPaymentMode(TransactionCase):
             {
                 "name": "Direct Debit of suppliers from Bank 1",
                 "bank_account_link": "variable",
-                "payment_method_id": cls.manual_out.id,
-                "company_id": cls.company.id,
-                "fixed_journal_id": cls.journal_c1.id,
-                "variable_journal_ids": [(6, 0, [cls.journal_c1.id])],
+                "payment_method_id": self.manual_out.id,
+                "company_id": self.company.id,
+                "fixed_journal_id": self.journal_c1.id,
+                "variable_journal_ids": [Command.set([self.journal_c1.id])],
             }
         )
 
     def test_onchange_payment_type(self):
         self.payment_mode_c1.payment_method_id = self.manual_in
-        self.payment_mode_c1.payment_method_id_change()
         self.assertTrue(
             all(
                 [
-                    journal.type in ["sale_refund", "sale"]
+                    journal.type == "sale"
                     for journal in self.payment_mode_c1.default_journal_ids
                 ]
             )
         )
         self.payment_mode_c1.payment_method_id = self.manual_out
-        self.payment_mode_c1.payment_method_id_change()
         self.assertTrue(
             all(
                 [
-                    journal.type in ["purchase_refund", "purchase"]
+                    journal.type == "purchase"
                     for journal in self.payment_mode_c1.default_journal_ids
                 ]
             )

@@ -56,10 +56,22 @@ class TestMandate(TransactionCase):
         bank_account = self.env.ref("account_payment_mode.res_partner_12_iban")
         self.mandate = self.env["account.banking.mandate"].create(
             {
-                "partner_bank_id": bank_account.id,
+                "name": "Test Partner SDD",
+                "company_id": cls.company.id,
+            }
+        )
+        cls.partner_bank = cls.env["res.partner.bank"].create(
+            {
+                "acc_number": "FR451111 9999 8888 5555 9999 421",
+                "partner_id": cls.partner.id,
+            }
+        )
+        cls.mandate = cls.env["account.banking.mandate"].create(
+            {
+                "partner_bank_id": cls.partner_bank.id,
                 "format": "sepa",
                 "type": "oneoff",
                 "signature_date": "2015-01-01",
+                "company_id": cls.company.id,
             }
         )
-        return res
