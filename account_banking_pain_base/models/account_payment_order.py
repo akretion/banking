@@ -520,6 +520,9 @@ class AccountPaymentOrder(models.Model):
             party_account_other = etree.SubElement(party_account_id, "Othr")
             party_account_other_id = etree.SubElement(party_account_other, "Id")
             party_account_other_id.text = partner_bank.sanitized_acc_number
+        if party_type == "Dbtr" and partner_bank.currency_id:
+            party_account_current = etree.SubElement(party_account, "Ccy")
+            party_account_current.text = partner_bank.currency_id.name
         return True
 
     @api.model
