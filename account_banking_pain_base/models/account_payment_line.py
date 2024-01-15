@@ -220,3 +220,13 @@ class AccountPaymentLine(models.Model):
         if self.purpose:
             purpose = etree.SubElement(parent_node, "Purp")
             etree.SubElement(purpose, "Cd").text = self.purpose
+
+    # Implement in a submodule
+    def _get_instruction_for_creditor_agent_information(self):
+        return False
+
+    def generate_instruction_for_creditor_agent(self, parent_node):
+        instr_information = self._get_instruction_for_creditor_agent_information()
+        if instr_information:
+            instruction = etree.SubElement(parent_node, "InstrForCdtrAgt")
+            etree.SubElement(instruction, "InstrInf").text = instr_information

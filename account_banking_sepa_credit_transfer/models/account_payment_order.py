@@ -189,6 +189,7 @@ class AccountPaymentOrder(models.Model):
                     line,
                 )
                 payment_line = line.payment_line_ids[0]
+                payment_line.generate_instruction_for_creditor_agent(credit_transfer_transaction_info)
                 payment_line.generate_purpose(credit_transfer_transaction_info)
                 payment_line.generate_regulatory_reporting(
                     credit_transfer_transaction_info, gen_args
