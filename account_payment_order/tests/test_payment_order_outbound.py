@@ -310,7 +310,7 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
     def test_invoice_communication_02(self):
         self.invoice.payment_reference = "R1234"
         self.assertEqual(
-            "F1242", self.invoice._get_payment_order_communication_direct()
+            "R1234", self.invoice._get_payment_order_communication_direct()
         )
 
     def test_invoice_communication_03(self):
@@ -438,7 +438,7 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         self.invoice.payment_reference = "F/1234"
         self.invoice.action_post()
         self.assertEqual(
-            "F1242", self.invoice._get_payment_order_communication_direct()
+            "F/1234", self.invoice._get_payment_order_communication_direct()
         )
         self.refund = self._create_supplier_refund(self.invoice)
         with Form(self.refund) as refund_form:
@@ -448,7 +448,9 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
                 line_form.price_unit = 75.0
 
         self.refund.action_post()
-        self.assertEqual("R1234", self.refund._get_payment_order_communication_direct())
+        self.assertEqual(
+            "FR/1234", self.refund._get_payment_order_communication_direct()
+        )
 
         # The user add the outstanding payment to the invoice
         invoice_line = self.invoice.line_ids.filtered(
@@ -470,8 +472,7 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
 
         self.assertEqual(len(payment_order.payment_line_ids), 1)
 
-        self.assertEqual("F1242 R1234", payment_order.payment_line_ids.communication)
-        self.assertNotIn("FR/1234", payment_order.payment_line_ids.communication)
+        self.assertEqual("F/1234 FR/1234", payment_order.payment_line_ids.communication)
 
     def test_supplier_manual_refund(self):
         """

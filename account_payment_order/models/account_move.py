@@ -19,13 +19,14 @@ class AccountMove(models.Model):
     )
     payment_order_ok = fields.Boolean(compute="_compute_payment_order_ok")
     # we restore this field from <=v11 for now for preserving behavior
-    # TODO: Check if we can remove it and base everything in something at
-    # payment mode or company level
+    # in v16, we have a field invoice_reference_type on sale journals
+    # but it's not relevant because companies don't have a sale journal per country
+    # and we need it for supplier invoices too
     reference_type = fields.Selection(
-        selection=[("none", "Free Reference"), ("structured", "Structured Reference")],
+        selection=[("free", "Free Reference"), ("structured", "Structured Reference")],
         readonly=True,
         states={"draft": [("readonly", False)]},
-        default="none",
+        default="free",
     )
     payment_line_count = fields.Integer(compute="_compute_payment_line_count")
 
