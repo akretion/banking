@@ -215,7 +215,7 @@ class AccountPaymentLine(models.Model):
         if not self.communication:
             raise UserError(_("Communication is empty on payment line %s.") % self.name)
 
-    def _prepare_account_payment_vals(self):
+    def _prepare_account_payment_vals(self, pay_sequence):
         """Prepare the dictionary to create an account payment record from a set of
         payment lines.
         """
@@ -228,7 +228,7 @@ class AccountPaymentLine(models.Model):
             "amount": sum(self.mapped("amount_currency")),
             "date": self[:1].date,
             "currency_id": self.currency_id.id,
-            "ref": self.order_id.name,
+            "ref": f"{self.order_id.name}/{pay_sequence}",
             # Put the name as the wildcard for forcing a unique name. If not, Odoo gets
             # the sequence for all the payment at the same time
             "name": "/",

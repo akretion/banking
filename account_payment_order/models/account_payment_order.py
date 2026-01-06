@@ -412,7 +412,9 @@ class AccountPaymentOrder(models.Model):
 
             # Create account payments
             payment_vals = []
+            payment_seq = 0
             for paydict in list(group_paylines.values()):
+                payment_seq += 1
                 # Block if a bank payment line is <= 0
                 if paydict["total"] <= 0:
                     raise UserError(
@@ -423,7 +425,9 @@ class AccountPaymentOrder(models.Model):
                             amount=paydict["total"],
                         )
                     )
-                payment_vals.append(paydict["paylines"]._prepare_account_payment_vals())
+                payment_vals.append(
+                    paydict["paylines"]._prepare_account_payment_vals(payment_seq)
+                )
             self.env["account.payment"].create(payment_vals)
         self.write({"state": "open"})
 

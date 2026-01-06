@@ -140,10 +140,10 @@ class AccountPaymentOrder(models.Model):
                     dd_transaction_info, "PmtId"
                 )
                 payment_identification.InstrId = self._prepare_field(
-                    "Instruction Identification", str(line.move_id.id), 35, gen_args
+                    "Instruction Identification", line.ref, 35, gen_args
                 )
                 payment_identification.EndToEndId = self._prepare_field(
-                    "End to End Identification", str(line.move_id.id), 35, gen_args
+                    "End to End Identification", line.ref, 35, gen_args
                 )
                 dd_transaction_info.InstdAmt = line.currency_id._pain_format(
                     line.amount

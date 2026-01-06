@@ -3,11 +3,11 @@
     <record id="view_account_payment_tree_payment_order" model="ir.ui.view">
         <field name="name">account.payment.tree</field>
         <field name="model">account.payment</field>
-        <field name="mode">primary</field>
         <field name="inherit_id" ref="account.view_account_payment_tree" />
         <field name="arch" type="xml">
             <field name="name" position="after">
-                <field name="payment_reference" />
+                <field name="payment_reference" optional="show" />
+                <field name="ref" optional="show" />
             </field>
         </field>
     </record>
