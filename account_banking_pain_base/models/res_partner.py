@@ -99,11 +99,9 @@ class ResPartner(models.Model):
     def _improved_street_split(self, street):
         # This method is fully tested in tests/test_pain.py
         logger.debug("_improved_street_split called on '%s'", street)
-        street = street and street.strip()
+        street = street and street.strip().replace(",", " ").replace(".", " ")
         if not street:
             return (False, False)
-        street = street.replace(",", " ")
-        street = street.replace(".", " ")
         # replace all multi-spaces by one space
         street = " ".join(street.split())
 
